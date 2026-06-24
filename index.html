@@ -1375,49 +1375,28 @@
     function parseA01(txt){
       const out = {account:'A01', month:null, net_assets:null, twr_pct:null, pl_amount:null, flow:0};
 
-      // 1. Month — from statement date header "資產報表截至：2026年05月31日"
-      const dateM = txt.match(/資產報表截至[：:]\s*(\d{4})年(\d{2})月/) || txt.match(/资产报表截至[：:]\s*(\d{4})年(\d{2})月/);
-      if(dateM){ out.month = dateM[1]+'-'+dateM[2]; }
-
-      // 2. Net assets — Account 01 only (NOT the combined "瑞銀淨資產總額" total).
-      //    Find the "投資組合 01" section, then its "淨資產 100.00 XX XXX XXX".
-      const a01Idx = txt.indexOf('投資組合 01') !== -1 ? txt.indexOf('投資組合 01') : txt.indexOf('投资组合 01');
-      if(a01Idx !== -1){
-        const a01Section = txt.slice(a01Idx, a01Idx + 2000);
-        const naM = a01Section.match(/淨資產\s+100\.00\s+([\d\s]{5,15})/) || a01Section.match(/净资产\s+100\.00\s+([\d\s]{5,15})/);
-        if(naM) out.net_assets = cleanNum(naM[1]);
-      }
-      // Fallback: "期末價值 [prev_year] [current_year]" — take current year (2nd number).
-      if(out.net_assets==null){
-        const evM = txt.match(/期末價值\s+([\d\s]{5,15})\s+([\d\s]{5,15})/) || txt.match(/期末价值\s+([\d\s]{5,15})\s+([\d\s]{5,15})/);
-        if(evM) out.net_assets = cleanNum(evM[2]);
+      // 本月: + 欧式日期行一次搞定：月份/净资产/TWR/损益
+      // 格式: 本月:
+ DD.MM.YYYY-DD.MM.YYYY  [net_assets]  [twr%]  [P&L]
+      const curM = txt.match(
+        /本月[：:]?\s*[
+]\s*(\d{2}\.\d{2}\.\d{4})-(\d{2}\.\d{2}\.\d{4})\s+([\d\s]+?)\s+([-\d.]+)%\s+([-\d\s-]+)/
+      );
+      if(curM){
+        const p = curM[2].split('.');       // "30.04.2026" → ["30","04","2026"]
+        out.month      = p[2]+'-'+p[1];
+        out.net_assets = cleanNum(curM[3]);
+        out.twr_pct    = parseFloat(curM[4]);
+        out.pl_amount  = cleanNum(curM[5]);
       }
 
-      // 3. Current month TWR — "現時 月份 -7.19%" / "本時 月份 -7.19%"
-      const twrM = txt.match(/現時\s*月份\s*([-\d.]+)%/) || txt.match(/本時\s*月份\s*([-\d.]+)%/) ||
-                   txt.match(/现时\s*月份\s*([-\d.]+)%/) || txt.match(/本时\s*月份\s*([-\d.]+)%/);
-      if(twrM) out.twr_pct = parseFloat(twrM[1]);
-
-      // 4. Monthly P&L — most recent row of the monthly performance table:
-      //    "2026年05月29日  21 918 794  0  -252 500  -1 709 716  -7.19%"
-      //    Columns: [period-end value] [flow] [flow] [P&L]  then TWR%.
-      //    Spaces double as thousands-separators AND column-separators, so we
-      //    capture the whole numeric segment before the trailing TWR%, then
-      //    tokenise into UBS-style numbers (optional minus, 1-3 digits, then
-      //    groups of exactly 3 digits). P&L = last token, flow = 3rd token.
-      const NUM_RE = /-?\d{1,3}(?: \d{3})*/g;
-      const monthRowRegex = /(\d{4})年(\d{2})月(\d{2})日\s+(.+?)\s+(-?\d+\.\d+)%/g;
-      let lastMatch=null, mr;
-      while((mr = monthRowRegex.exec(txt)) !== null) lastMatch = mr;
-      if(lastMatch){
-        const nums = lastMatch[4].match(NUM_RE) || [];
-        if(nums.length){
-          out.pl_amount = cleanNum(nums[nums.length-1]);
-          if(nums.length>=2) out.flow = cleanNum(nums[nums.length-2]) || 0;
-        }
-        if(out.month==null) out.month = lastMatch[1]+'-'+lastMatch[2];
-        if(out.twr_pct==null) out.twr_pct = parseFloat(lastMatch[5]);
+      // Fallback 月份 — 报表标题 "資產報表截至：2026年05月31日"
+      if(!out.month){
+        const dateM = txt.match(/資產報表截至[：:]\s*(\d{4})年(\d{2})月/) ||
+                      txt.match(/资产报表截至[：:]\s*(\d{4})年(\d{2})月/);
+        if(dateM) out.month = dateM[1]+'-'+dateM[2];
       }
+
       return out;
     }
     function parseA02(txt){
