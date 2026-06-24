@@ -1165,6 +1165,8 @@
     <!-- KPI strip -->
     <div id="le_kpiStrip" style="display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--ink);border-bottom:1px solid var(--hairline);margin-bottom:20px;"></div>
 
+    <!-- Month tabs for holdings history -->
+    <div id="holdingsTabs" style="display:flex;gap:0;flex-wrap:wrap;margin-bottom:16px;border-bottom:2px solid var(--hairline);"></div>
     <!-- Two-column: Account 01 / Account 02 -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
       <div id="le_acct01Card" style="border:1px solid var(--hairline);padding:16px;border-radius:2px;"></div>
@@ -1183,22 +1185,6 @@
       <div id="le_accordion"></div>
     </div>
 
-    <!-- ════ 持仓历史 Holdings History ════ -->
-    <div style="margin-top:36px;border-top:1px solid var(--ink);padding-top:24px;">
-      <div style="font-size:var(--fs-eyebrow);letter-spacing:.18em;text-transform:uppercase;color:var(--claret);margin:0 0 16px;">持仓明细 Monthly Holdings</div>
-      <!-- 月份 tabs -->
-      <div id="holdingsTabs" style="display:flex;gap:0;flex-wrap:wrap;margin-bottom:20px;border-bottom:2px solid var(--hairline);"></div>
-      <!-- A01 -->
-      <div style="margin-bottom:28px;">
-        <div style="font-size:var(--fs-caption);letter-spacing:.12em;text-transform:uppercase;color:var(--slate);font-family:var(--font-text);margin-bottom:8px;">账户 01 · A01 (达芙妮)</div>
-        <div id="holdingsA01Table" style="overflow-x:auto;"></div>
-      </div>
-      <!-- A02 -->
-      <div>
-        <div style="font-size:var(--fs-caption);letter-spacing:.12em;text-transform:uppercase;color:var(--slate);font-family:var(--font-text);margin-bottom:8px;">账户 02 · A02 (UBS代管股票)</div>
-        <div id="holdingsA02Table" style="overflow-x:auto;"></div>
-      </div>
-    </div>
 
     <script>
     (function(){
@@ -1296,7 +1282,8 @@
           <div style="padding:10px 0;border-right:1px solid var(--hairline);"><div style="font-size:var(--fs-caption);color:var(--slate);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;">净资产</div><div style="font-family:var(--font-display);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;">USD ${fmt(a01?a01.net_assets:0)}</div></div>
           <div style="padding:10px 14px;"><div style="font-size:var(--fs-caption);color:var(--slate);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;">YTD TWR</div><div style="font-family:var(--font-display);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;color:${signColor(ytd)};">${minusGlyph(pct(ytd))}</div></div>
         </div>
-        <div style="overflow-x:auto;"><table class="ftable"><thead><tr><th style="text-align:left">持仓</th><th>数量</th><th>市值 USD</th><th>占比</th><th style="text-align:left">备注</th></tr></thead><tbody>${holdingRows('A01',5)}</tbody></table></div>`;
+        <div style="overflow-x:auto;"><table class="ftable"><thead><tr><th style="text-align:left">持仓</th><th>数量</th><th>市值 USD</th><th>占比</th><th style="text-align:left">备注</th></tr></thead><tbody>${holdingRows('A01',5)}</tbody></table></div>
+        <div id="holdingsA01Table" style="overflow-x:auto;margin-top:4px;"></div>`;
 
       const a02 = latestOf('A02');
       const a02rows = MONTHLY.filter(r=>r.account==='A02').sort((a,b)=>a.month.localeCompare(b.month));
@@ -1310,7 +1297,8 @@
           <div style="padding:10px 12px;border-right:1px solid var(--hairline);"><div style="font-size:var(--fs-caption);color:var(--slate);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;">自开仓</div><div style="font-family:var(--font-display);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;color:${signColor(a02ytd)};">${minusGlyph(pct(a02ytd))}</div></div>
           <div style="padding:10px 12px;"><div style="font-size:var(--fs-caption);color:var(--slate);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;">最新单月</div><div style="font-family:var(--font-display);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;color:${signColor(a02month)};">${minusGlyph(pct(a02month))}</div></div>
         </div>
-        <div style="overflow-x:auto;"><table class="ftable"><thead><tr><th style="text-align:left">持仓</th><th>市值 USD</th><th>占比</th></tr></thead><tbody>${holdingRows('A02',3)}</tbody></table></div>`;
+        <div style="overflow-x:auto;"><table class="ftable"><thead><tr><th style="text-align:left">持仓</th><th>市值 USD</th><th>占比</th></tr></thead><tbody>${holdingRows('A02',3)}</tbody></table></div>
+        <div id="holdingsA02Table" style="overflow-x:auto;margin-top:4px;"></div>`;
     }
 
     // ── Chart ──
