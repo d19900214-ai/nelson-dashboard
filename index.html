@@ -1393,12 +1393,9 @@
       const out = {account:'A01', month:null, net_assets:null, twr_pct:null, pl_amount:null, flow:0};
 
       // 本月: + 欧式日期行一次搞定：月份/净资产/TWR/损益
-      // 格式: 本月:
- DD.MM.YYYY-DD.MM.YYYY  [net_assets]  [twr%]  [P&L]
+      // 格式: 本月: DD.MM.YYYY-DD.MM.YYYY  [net_assets]  [twr%]  [P&L]
       const curM = txt.match(
-        /本月[：:]?\s*[
-
-]\s*(\d{2}\.\d{2}\.\d{4})-(\d{2}\.\d{2}\.\d{4})\s+([\d\s]+?)\s+([-\d.]+)%\s+([-\d\s-]+)/
+        /本月[：:]?\s*[\n\r]\s*(\d{2}\.\d{2}\.\d{4})-(\d{2}\.\d{2}\.\d{4})\s+([\d\s]+?)\s+([-\d.]+)%\s+([-\d\s-]+)/
       );
       if(curM){
         const p = curM[2].split('.');       // "30.04.2026" → ["30","04","2026"]
