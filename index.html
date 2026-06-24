@@ -1183,6 +1183,23 @@
       <div id="le_accordion"></div>
     </div>
 
+    <!-- ════ 持仓历史 Holdings History ════ -->
+    <div style="margin-top:36px;border-top:1px solid var(--ink);padding-top:24px;">
+      <div style="font-size:var(--fs-eyebrow);letter-spacing:.18em;text-transform:uppercase;color:var(--claret);margin:0 0 16px;">持仓明细 Monthly Holdings</div>
+      <!-- 月份 tabs -->
+      <div id="holdingsTabs" style="display:flex;gap:0;flex-wrap:wrap;margin-bottom:20px;border-bottom:2px solid var(--hairline);"></div>
+      <!-- A01 -->
+      <div style="margin-bottom:28px;">
+        <div style="font-size:var(--fs-caption);letter-spacing:.12em;text-transform:uppercase;color:var(--slate);font-family:var(--font-text);margin-bottom:8px;">账户 01 · A01 (达芙妮)</div>
+        <div id="holdingsA01Table" style="overflow-x:auto;"></div>
+      </div>
+      <!-- A02 -->
+      <div>
+        <div style="font-size:var(--fs-caption);letter-spacing:.12em;text-transform:uppercase;color:var(--slate);font-family:var(--font-text);margin-bottom:8px;">账户 02 · A02 (UBS代管股票)</div>
+        <div id="holdingsA02Table" style="overflow-x:auto;"></div>
+      </div>
+    </div>
+
     <script>
     (function(){
     const GAS_URL = 'https://script.google.com/macros/s/AKfycbx9ayyQLWBNyylh86tU0WQwlt4CzRWUNAEry4Ok_iWV-2QaW5AR56jfWkPxxtRvsOd7zA/exec';
@@ -1339,7 +1356,7 @@
       document.getElementById('le_accordion').innerHTML = html;
     }
 
-    function renderAll(){ renderKPI(); renderCards(); renderChart(); renderAccordion();
+    function renderAll(){ renderKPI(); renderCards(); renderChart(); renderAccordion(); renderHoldingsHistory();
       const lu = META.last_updated || latestHoldingDate('A01') || latestHoldingDate('A02');
       if(lu) document.getElementById('le_asOf').textContent = '数据截至 ' + lu;
     }
@@ -1660,6 +1677,23 @@ function parseA01Holdings(txt, asOfDate) {
             {key:'a02_net_assets', value: String(payloads.find(p=>p.account==='A02')?.net_assets||'')}
           ]
         })});
+
+        // ── save holdings to localStorage ──
+        if (holdTable) {
+          const allRows = [];
+          holdTable.querySelectorAll('tbody tr').forEach(tr => {
+            const allH = [...(parsed.holdingsA01||[]),...(parsed.holdingsA02||[])];
+            const acct = tr.dataset.hi !== undefined ? (allH[+tr.dataset.hi]?.account||'A02') : 'A02';
+            const row = { account: acct };
+            tr.querySelectorAll('.le-hi').forEach(inp => {
+              const f=inp.dataset.f, v=inp.value.trim();
+              row[f] = (f==='name'||f==='shares'||f==='notes') ? v : (v===''?null:parseFloat(v));
+            });
+            if (row.name) allRows.push(row);
+          });
+          const saveMonth = payloads[0]?.month||'';
+          if (saveMonth && allRows.length) saveHoldingsLocal(saveMonth, allRows);
+        }
 
         msg.textContent = '✓ 已保存，正在刷新…';
         await loadData();
@@ -2095,6 +2129,94 @@ function parseA01Holdings(txt, asOfDate) {
 
   }
 
+    // ════ Holdings localStorage ════
+    const LS_KEY = 'le_holdings_v1';
+
+    function saveHoldingsLocal(month, rows) {
+      let store = {};
+      try { store = JSON.parse(localStorage.getItem(LS_KEY)||'{}'); } catch(e){}
+      store[month] = { A01: rows.filter(r=>r.account==='A01'), A02: rows.filter(r=>r.account==='A02') };
+      localStorage.setItem(LS_KEY, JSON.stringify(store));
+      renderHoldingsHistory();
+    }
+
+    function getHoldingsStore() {
+      let store = {};
+      try { store = JSON.parse(localStorage.getItem(LS_KEY)||'{}'); } catch(e){}
+      // 用 SEED_HOLDINGS 填充没有本地数据的月份
+      const seedByMonth = {};
+      SEED_HOLDINGS.forEach(h => {
+        const m = h.as_of_date ? h.as_of_date.slice(0,7) : '';
+        if (!m) return;
+        if (!seedByMonth[m]) seedByMonth[m] = { A01:[], A02:[] };
+        seedByMonth[m][h.account].push(h);
+      });
+      // 只有 localStorage 没有该月数据时才用 seed
+      Object.keys(seedByMonth).forEach(m => {
+        if (!store[m]) store[m] = seedByMonth[m];
+      });
+      return store;
+    }
+
+    let activeHoldingsMonth = null;
+
+    function renderHoldingsHistory() {
+      const store = getHoldingsStore();
+      const months = Object.keys(store).sort();
+      if (!months.length) return;
+
+      // 默认选最新月
+      if (!activeHoldingsMonth || !store[activeHoldingsMonth]) activeHoldingsMonth = months[months.length-1];
+
+      // 渲染 tabs
+      const tabs = document.getElementById('holdingsTabs');
+      if (!tabs) return;
+      const cnM = m => parseInt(m.split('-')[1],10) + '月';
+      tabs.innerHTML = months.map(m => {
+        const active = m === activeHoldingsMonth;
+        return `<button onclick="switchHoldingsTab('${m}')" style="
+          font-family:var(--font-cjk);font-size:13px;font-weight:${active?'700':'500'};
+          padding:10px 20px;border:none;border-bottom:3px solid ${active?'var(--claret)':'transparent'};
+          background:transparent;cursor:pointer;color:${active?'var(--ink)':'var(--slate)'};
+          transition:all .15s;">${cnM(m)}</button>`;
+      }).join('');
+
+      renderHoldingsTable(store[activeHoldingsMonth]);
+    }
+
+    function switchHoldingsTab(month) {
+      activeHoldingsMonth = month;
+      renderHoldingsHistory();
+    }
+
+    function renderHoldingsTable(monthData) {
+      const fmt2 = n => n==null?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:0});
+      const pct2 = v => v==null?'—':Number(v).toFixed(v<1?2:1)+'%';
+
+      function makeTable(rows, cols) {
+        if (!rows||!rows.length) return '<div style="font-size:12px;color:var(--slate);font-family:var(--font-cjk);padding:8px 0;">暂无数据</div>';
+        let total = 0;
+        const bodyRows = rows.map(h => {
+          total += Number(h.market_value_usd)||0;
+          if (cols===5) return `<tr><td>${h.name||'—'}</td><td>${h.shares||'—'}</td><td>${fmt2(h.market_value_usd)}</td><td>${pct2(h.pct_portfolio)}</td><td class="txt">${h.notes||'—'}</td></tr>`;
+          return `<tr><td>${h.name||'—'}</td><td>${h.shares||'—'}</td><td>${fmt2(h.market_value_usd)}</td><td>${pct2(h.pct_portfolio)}</td></tr>`;
+        }).join('');
+        const totalRow = cols===5
+          ? `<tr class="total"><td class="txt">合计</td><td>—</td><td>${fmt2(total)}</td><td>100%</td><td>—</td></tr>`
+          : `<tr class="total"><td class="txt">合计</td><td>—</td><td>${fmt2(total)}</td><td>100%</td></tr>`;
+        const hdr = cols===5
+          ? '<tr><th style="text-align:left">持仓名称</th><th>数量</th><th>市值 USD</th><th>占比</th><th style="text-align:left">备注</th></tr>'
+          : '<tr><th style="text-align:left">持仓名称</th><th>数量</th><th>市值 USD</th><th>占比</th></tr>';
+        return `<table class="ftable"><thead>${hdr}</thead><tbody>${bodyRows}${totalRow}</tbody></table>`;
+      }
+
+      const a01El = document.getElementById('holdingsA01Table');
+      const a02El = document.getElementById('holdingsA02Table');
+      if (a01El) a01El.innerHTML = makeTable(monthData?.A01||[], 5);
+      if (a02El) a02El.innerHTML = makeTable(monthData?.A02||[], 4);
+    }
+
+    window.switchHoldingsTab = switchHoldingsTab;
     window.addEventListener('load', buildCharts);
 </script>
 </body>
