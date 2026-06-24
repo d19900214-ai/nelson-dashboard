@@ -1792,8 +1792,9 @@ function parseA01Holdings(txt, asOfDate) {
         if (!seedByMonth[m]) seedByMonth[m] = { A01:[], A02:[] };
         seedByMonth[m][h.account].push(h);
       });
+      // SEED 数据强制覆盖（SEED 是 PDF 核实数据，始终优先于 localStorage 缓存）
       Object.keys(seedByMonth).forEach(m => {
-        if (!store[m]) store[m] = seedByMonth[m];
+        store[m] = seedByMonth[m];
       });
       return store;
     }
