@@ -2202,15 +2202,20 @@ function parseA01Holdings(txt, asOfDate) {
       const pct2 = v => v==null?'—':Number(v).toFixed(v<1?2:1)+'%';
       function makeTable(rows, cols) {
         if (!rows||!rows.length) return '<div style="font-size:12px;color:var(--slate);font-family:var(--font-cjk);padding:8px 0;">暂无数据</div>';
-        // 按市值降序，前15大显示，其余合并为"其他股票"
-        const sorted = [...rows].sort((a,b)=>(Number(b.market_value_usd)||0)-(Number(a.market_value_usd)||0));
+        // 按市值降序，前15大显示，其余合并为"其他股票"（预存"其他"行固定置底）
+        const isOther = r => (r.name||'').startsWith('其他');
+        const mainRows = rows.filter(r=>!isOther(r));
+        const preOther = rows.filter(r=>isOther(r));
+        const sorted = [...mainRows].sort((a,b)=>(Number(b.market_value_usd)||0)-(Number(a.market_value_usd)||0));
         const top = sorted.slice(0,15);
         const rest = sorted.slice(15);
+        const allOther = [...rest, ...preOther];
         let displayRows = top;
-        if(rest.length){
-          const restVal = rest.reduce((s,r)=>s+(Number(r.market_value_usd)||0),0);
-          const restPct = rest.reduce((s,r)=>s+(Number(r.pct_portfolio)||0),0);
-          displayRows = [...top, {name:`其他股票 (${rest.length}只)`,shares:'—',market_value_usd:restVal,pct_portfolio:restPct,notes:''}];
+        if(allOther.length){
+          const restVal = allOther.reduce((s,r)=>s+(Number(r.market_value_usd)||0),0);
+          const restPct = allOther.reduce((s,r)=>s+(Number(r.pct_portfolio)||0),0);
+          const cnt = allOther.filter(r=>!isOther(r)).length + preOther.length;
+          displayRows = [...top, {name:`其他股票 (${cnt}只)`,shares:'—',market_value_usd:restVal,pct_portfolio:restPct,notes:''}];
         }
         let total = 0;
         const bodyRows = displayRows.map(h => {
@@ -2232,6 +2237,7 @@ function parseA01Holdings(txt, asOfDate) {
       if (a02El) a02El.innerHTML = makeTable(monthData?.A02||[], 4);
     }
     window.switchHoldingsTab = switchHoldingsTab;
+    window.switchFLHoldings = switchFLHoldings;
     window.saveHoldingsLocal = saveHoldingsLocal;
     // expose for tab re-init if needed
     window.buildLECharts = renderChart;
@@ -2413,4 +2419,64 @@ function parseA01Holdings(txt, asOfDate) {
 
     /* ── A2: China by category ── */
     const cnData = [
-      { cat:'住宅', v:3809200 }, { cat:
+      { cat:'住宅', v:3809200 }, { cat:'住宅', v:3237800 }, { cat:'住宅', v:4367400 },
+      { cat:'商铺', v:3504474 }, { cat:'办公', v:4252850 }, { cat:'办公', v:3297104 },
+    ];
+    const catMap = {};
+    cnData.forEach(d => { catMap[d.cat] = (catMap[d.cat]||0) + d.v; });
+    const catLabels = ['住宅','办公','商铺'];
+    const catVals   = catLabels.map(l => catMap[l]||0);
+    const catColors = [C.d1, C.d2, C.d3];
+    new Chart(document.getElementById('chartCategory'), {
+      type: 'bar',
+      data: { labels: catLabels, datasets: [{ data: catVals, backgroundColor: catColors, borderWidth:0, barThickness:26 }] },
+      options: { indexAxis:'y', plugins: {
+          legend:{display:false},
+          tooltip:{ backgroundColor:C.ink, padding:10, cornerRadius:0, callbacks:{ label: ctx=>'  '+fmtCNY(ctx.parsed.x) }}
+        },
+        scales: {
+          x:{ grid:{color:C.hair}, ticks:{ callback: v=>'¥'+(v/1e6).toFixed(0)+'M', font:{size:10} } },
+          y:{ grid:{display:false}, ticks:{ font:{family:"'Noto Sans SC',sans-serif",size:12}, color:C.inkSoft } }
+        }
+      }
+    });
+    const catLegendEl = document.getElementById('catLegend');
+    if (catLegendEl) {
+      const enMap = {'住宅':'Residential','办公':'Office','商铺':'Retail'};
+      catLegendEl.innerHTML = catLabels.map((l,i) =>
+        '<li><span class="lab"><span class="swatch-dot" style="background:'+catColors[i]+'"></span>'+l+' · '+enMap[l]+'</span><span class="val">'+fmtCNY(catVals[i])+'</span></li>'
+      ).join('') + '<li><span class="lab" style="color:var(--slate)">合计 (不含 39A 待补充)</span><span class="val">'+fmtCNY(catVals.reduce((a,b)=>a+b,0))+'</span></li>';
+    }
+
+    /* ── B: Overseas asset allocation (May 2026 UBS) ── */
+    const ovData = [
+      { label:'達芙妮 Daphne (Lucky Earn A01)', v:21840716, color:C.d1 },
+      { label:'A01 定存+现金 (Lucky Earn)',      v:78078,   color:C.d2 },
+      { label:'A02 股票组合 (Lucky Earn)',        v:1138390, color:C.d3 },
+      { label:'债券+结构性 (For Lucky)',           v:799052,  color:C.d4 },
+      { label:'现金+货币基金 (For Lucky)',         v:803919,  color:C.d5 },
+    ];
+    const ovTotal = ovData.reduce((a,b)=>a+b.v, 0);
+    new Chart(document.getElementById('chartOverseas'), {
+      type: 'doughnut',
+      data: { labels: ovData.map(d=>d.label),
+        datasets:[{ data:ovData.map(d=>d.v), backgroundColor:ovData.map(d=>d.color), borderColor:C.paper, borderWidth:2, hoverOffset:4 }]
+      },
+      options: { cutout:'62%', plugins: {
+        legend:{display:false},
+        tooltip:{ backgroundColor:C.ink, padding:10, cornerRadius:0,
+          callbacks:{ label: ctx=>'  USD '+ctx.parsed.toLocaleString('en-US')+' · '+(ctx.parsed/ovTotal*100).toFixed(1)+'%' }}
+      }}
+    });
+    const ovLegEl = document.getElementById('overseasLegend');
+    if (ovLegEl) {
+      ovLegEl.innerHTML = ovData.map(d =>
+        '<li><span class="lab"><span class="swatch-dot" style="background:'+d.color+'"></span>'+d.label+'</span><span class="val">USD '+d.v.toLocaleString('en-US')+'<br><span style="font-size:10px;color:var(--slate)">'+(d.v/ovTotal*100).toFixed(1)+'%</span></span></li>'
+      ).join('') + '<li><span class="lab" style="color:var(--slate)">合计</span><span class="val">USD '+ovTotal.toLocaleString('en-US')+'</span></li>';
+    }
+  }
+
+  window.addEventListener('load', buildCharts);
+</script>
+</body>
+</html>
