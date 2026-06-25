@@ -583,10 +583,11 @@
         </details>
 
         <details class="node-group" open>
-          <summary class="node l1 node-toggle">For Lucky Investment Ltd（境外 + 台灣）<span class="val">净资产 USD 487,498</span><span class="node-chevron">▾</span></summary>
-          <div class="node l2">港股：長和 / 阿里巴巴 / 金山软件（市值 HKD 3,428,540）</div>
-          <div class="node l2">台灣：富坦新固月 / JPM俄羅斯 / JPM美科 共4笔（含手续费 USD 582,049）</div>
-          <div class="node l2">现金 USD ~191K（境外 + 台灣合计）</div>
+          <summary class="node l1 node-toggle">For Lucky Investment Ltd（UBS 代管）<span class="val">净资产 USD 1,665,916</span><span class="node-chevron">▾</span></summary>
+          <div class="node l2">债券：Woodside Finance 4.50% Notes 2029 — USD 301,977</div>
+          <div class="node l2">结构性产品：UBS 8% DCN + Vontobel 8.01% (TSM/ASML) — USD 497,075</div>
+          <div class="node l2">通知存款 USD/HKD + JPM 货币基金 — USD 803,919</div>
+          <div class="node l2">阿里巴巴 (9988) 4,000 股 — USD 61,704</div>
         </details>
       </div>
     </details>
@@ -621,7 +622,7 @@
       <div class="chart-grid">
         <div>
           <div class="chart-box"><canvas id="chartOverseas" height="260"></canvas></div>
-          <p class="chart-cap">境外两实体合并持仓（达芙妮以成本价列示，未更新市价）</p>
+          <p class="chart-cap">境外两实体合并持仓（按 2026-05-29 UBS 报告市值列示）</p>
         </div>
         <div style="display:flex;flex-direction:column;justify-content:center;gap:20px;">
           <ul class="legend" id="overseasLegend"></ul>
@@ -633,16 +634,12 @@
               <span style="font-family:var(--font-display);font-variant-numeric:tabular-nums;color:var(--pos);">USD 23,057,184</span>
             </div>
             <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--hairline);font-size:var(--fs-small);">
-              <span style="font-family:var(--font-cjk);color:var(--ink-soft);">For Lucky 境外</span>
-              <span style="font-family:var(--font-display);font-variant-numeric:tabular-nums;color:var(--pos);">USD 352,812</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--hairline);font-size:var(--fs-small);">
-              <span style="font-family:var(--font-cjk);color:var(--ink-soft);">For Lucky 台灣</span>
-              <span style="font-family:var(--font-display);font-variant-numeric:tabular-nums;color:var(--pos);">USD 134,686</span>
+              <span style="font-family:var(--font-cjk);color:var(--ink-soft);">For Lucky Investment Ltd (UBS)</span>
+              <span style="font-family:var(--font-display);font-variant-numeric:tabular-nums;color:var(--pos);">USD 1,665,916</span>
             </div>
             <div style="display:flex;justify-content:space-between;padding:7px 0;font-size:var(--fs-small);font-weight:600;">
               <span style="font-family:var(--font-cjk);">合计 / Total</span>
-              <span style="font-family:var(--font-display);font-variant-numeric:tabular-nums;color:var(--pos);">USD 23,544,682</span>
+              <span style="font-family:var(--font-display);font-variant-numeric:tabular-nums;color:var(--pos);">USD 24,723,100</span>
             </div>
           </div>
         </div>
@@ -1231,17 +1228,64 @@
       {as_of_date:'2026-05-29', account:'A01', name:'達芙妮 Daphne (0210.HK)', shares:'444,608,905', market_value_usd:21840716, pct_portfolio:99.6, notes:'成本HKD 0.795→市价HKD 0.385 浮亏-51.99%'},
       {as_of_date:'2026-05-29', account:'A01', name:'通知存款 HKD Call Deposit', shares:'', market_value_usd:51412, pct_portfolio:0.23, notes:'利率1.00%'},
       {as_of_date:'2026-05-29', account:'A01', name:'现金账户 USD/SGD', shares:'', market_value_usd:26666, pct_portfolio:0.12, notes:''},
-      {as_of_date:'2026-05-29', account:'A02', name:'BNP AI证书 (结构性)', shares:'378', market_value_usd:68014, pct_portfolio:5.97, notes:'ISIN XS2719859246'},
-      {as_of_date:'2026-05-29', account:'A02', name:'Taiwan Semi ADR (TSM)', shares:'57', market_value_usd:23852, pct_portfolio:2.10, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'NVIDIA Corp.', shares:'377', market_value_usd:79600, pct_portfolio:6.99, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Microsoft Corp.', shares:'154', market_value_usd:69337, pct_portfolio:6.09, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'BNP AI证书 (XS2719859246)', shares:'378', market_value_usd:68014, pct_portfolio:5.97, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Broadcom Inc.', shares:'142', market_value_usd:63441, pct_portfolio:5.57, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Alphabet Inc.', shares:'113', market_value_usd:42537, pct_portfolio:3.74, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Apple Inc. (AAPL)', shares:'120', market_value_usd:37447, pct_portfolio:3.29, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Oracle Corp. (ORCL)', shares:'146', market_value_usd:32964, pct_portfolio:2.9, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Ibiden Co. Ltd', shares:'200', market_value_usd:28896, pct_portfolio:2.54, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Qualcomm Inc.', shares:'110', market_value_usd:27612, pct_portfolio:2.43, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Cisco Systems Inc.', shares:'225', market_value_usd:27095, pct_portfolio:2.38, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Texas Instruments Inc.', shares:'81', market_value_usd:24760, pct_portfolio:2.18, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Taiwan Semiconductor (TSM)', shares:'57', market_value_usd:23852, pct_portfolio:2.1, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'ORIX Corp. (8591)', shares:'600', market_value_usd:23508, pct_portfolio:2.07, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Meta Platforms Inc', shares:'37', market_value_usd:23403, pct_portfolio:2.06, notes:''},
       {as_of_date:'2026-05-29', account:'A02', name:'SAP SE', shares:'120', market_value_usd:21742, pct_portfolio:1.91, notes:''},
-      {as_of_date:'2026-05-29', account:'A02', name:'Deutsche Telekom', shares:'480', market_value_usd:16166, pct_portfolio:1.42, notes:''},
-      {as_of_date:'2026-05-29', account:'A02', name:'Allianz SE', shares:'35', market_value_usd:15586, pct_portfolio:1.37, notes:''},
-      {as_of_date:'2026-05-29', account:'A02', name:'NetEase ADR', shares:'100', market_value_usd:12282, pct_portfolio:1.08, notes:''},
-      {as_of_date:'2026-05-29', account:'A02', name:'Enel SpA', shares:'1000', market_value_usd:11232, pct_portfolio:0.99, notes:''},
-      {as_of_date:'2026-05-29', account:'A02', name:'Nestlé', shares:'110', market_value_usd:11184, pct_portfolio:0.98, notes:''},
-      {as_of_date:'2026-05-29', account:'A02', name:'Oracle', shares:'41', market_value_usd:7608, pct_portfolio:0.67, notes:''},
-      {as_of_date:'2026-05-29', account:'A02', name:'UBS货币基金', shares:'8.919', market_value_usd:19917, pct_portfolio:1.75, notes:''},
-      {as_of_date:'2026-05-29', account:'A02', name:'其他股票', shares:'', market_value_usd:929233, pct_portfolio:81.62, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'UBS (Lux) Money Market Fund', shares:'8.919', market_value_usd:19917, pct_portfolio:1.75, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'BAE Systems Plc', shares:'700', market_value_usd:19088, pct_portfolio:1.68, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Snowflake Inc', shares:'73', market_value_usd:18655, pct_portfolio:1.64, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Alibaba Group Holding (BABA)', shares:'150', market_value_usd:18633, pct_portfolio:1.64, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'AbbVie Inc.', shares:'85', market_value_usd:18506, pct_portfolio:1.63, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'JPMorgan Chase & Co', shares:'58', market_value_usd:17360, pct_portfolio:1.52, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Deutsche Telekom AG', shares:'480', market_value_usd:16166, pct_portfolio:1.42, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Emerson Electric Co', shares:'110', market_value_usd:15820, pct_portfolio:1.39, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Allianz SE (ALV)', shares:'35', market_value_usd:15586, pct_portfolio:1.37, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Amgen Inc. (AMGN)', shares:'46', market_value_usd:15492, pct_portfolio:1.36, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'AstraZeneca Plc', shares:'83', market_value_usd:15442, pct_portfolio:1.36, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Banco Santander SA', shares:'1230', market_value_usd:15398, pct_portfolio:1.35, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'McDonald\'s Corp.', shares:'55', market_value_usd:15356, pct_portfolio:1.35, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'United Parcel', shares:'142', market_value_usd:15150, pct_portfolio:1.33, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Datadog Inc.', shares:'60', market_value_usd:14841, pct_portfolio:1.3, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'CrowdStrike', shares:'20', market_value_usd:14620, pct_portfolio:1.28, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Verizon Communications', shares:'300', market_value_usd:14343, pct_portfolio:1.26, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Intuitive Surgical Inc.', shares:'32', market_value_usd:13588, pct_portfolio:1.19, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Vertiv Holdings LLC', shares:'43', market_value_usd:13576, pct_portfolio:1.19, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Salesforce Inc', shares:'70', market_value_usd:13377, pct_portfolio:1.18, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'RELX Plc (REL)', shares:'400', market_value_usd:13210, pct_portfolio:1.16, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Denso Corp.', shares:'1100', market_value_usd:13184, pct_portfolio:1.16, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Coca-Cola Co (KO)', shares:'160', market_value_usd:12642, pct_portfolio:1.11, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Air Products & Chemicals', shares:'45', market_value_usd:12538, pct_portfolio:1.1, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'NetEase (NTES)', shares:'100', market_value_usd:12282, pct_portfolio:1.08, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Starbucks Corp.', shares:'120', market_value_usd:11899, pct_portfolio:1.05, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'CVS Health Corp.', shares:'130', market_value_usd:11827, pct_portfolio:1.04, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'ASML Holding NV', shares:'7', market_value_usd:11312, pct_portfolio:0.99, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Enel S.p.A. (ENEL)', shares:'1000', market_value_usd:11232, pct_portfolio:0.99, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Nestlé AG (NESN)', shares:'110', market_value_usd:11184, pct_portfolio:0.98, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Arista Networks', shares:'70', market_value_usd:11163, pct_portfolio:0.98, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Union Pacific Corp.', shares:'40', market_value_usd:10506, pct_portfolio:0.92, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Barclays PLC (BARC)', shares:'1500', market_value_usd:9259, pct_portfolio:0.81, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Chevron Corp.', shares:'50', market_value_usd:9123, pct_portfolio:0.8, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Procter and Gamble Co.', shares:'60', market_value_usd:8614, pct_portfolio:0.76, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Singapore Telecom (Z74)', shares:'2500', market_value_usd:8507, pct_portfolio:0.75, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Shell Plc', shares:'200', market_value_usd:8406, pct_portfolio:0.74, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Spotify Technology', shares:'14', market_value_usd:6968, pct_portfolio:0.61, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Experian Plc (EXPN)', shares:'180', market_value_usd:6243, pct_portfolio:0.55, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'ServiceNow Inc.', shares:'50', market_value_usd:6219, pct_portfolio:0.55, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Waystar Holding', shares:'280', market_value_usd:5575, pct_portfolio:0.49, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'Adobe Inc. (ADBE)', shares:'20', market_value_usd:5184, pct_portfolio:0.46, notes:''},
+      {as_of_date:'2026-05-29', account:'A02', name:'NN Group N.V.', shares:'55', market_value_usd:4617, pct_portfolio:0.41, notes:''},
       {as_of_date:'2026-05-29', account:'A02', name:'现金账户', shares:'', market_value_usd:1574, pct_portfolio:0.14, notes:''},
     ];
 
@@ -1251,12 +1295,25 @@
       {month:'2026-05', net_assets:1665916, twr_pct:-0.21, pl_amount:-3115,  flow:252500, note:''},
     ];
     const FL_SEED_HOLDINGS = [
-      {as_of_date:'2026-04-30', name:'债券组合 (AUD/NZD为主)', market_value_usd:801090,  pct_portfolio:56.55, notes:'澳元计价为主，含NZD及USD债券'},
-      {as_of_date:'2026-04-30', name:'股票组合 Equities',       market_value_usd:301104,  pct_portfolio:21.25, notes:''},
-      {as_of_date:'2026-04-30', name:'结构性产品 + 存款',       market_value_usd:314337,  pct_portfolio:22.19, notes:'Yield Enhancement结构性产品 + HKD通知存款'},
-      {as_of_date:'2026-05-29', name:'债券组合 (AUD/NZD为主)', market_value_usd:1056735, pct_portfolio:63.43, notes:'澳元计价为主，含NZD及USD债券'},
-      {as_of_date:'2026-05-29', name:'股票组合 Equities',       market_value_usd:301977,  pct_portfolio:18.13, notes:''},
-      {as_of_date:'2026-05-29', name:'结构性产品 + 存款',       market_value_usd:307204,  pct_portfolio:18.44, notes:'Yield Enhancement结构性产品 + HKD通知存款'},
+      // ── 2026-04-30 (UBS对账单 净资产 1,416,531) ──────────────────────────────
+      {as_of_date:'2026-04-30', name:'UBS通知存款 USD Call Deposit', shares:'', market_value_usd:1127338, pct_portfolio:79.58, notes:'流水号62786 利率2.30%'},
+      {as_of_date:'2026-04-30', name:'JPMorgan Liquidity Funds 货币基金', shares:'17.028', market_value_usd:300000, pct_portfolio:21.18, notes:'ISIN LU0088277610'},
+      {as_of_date:'2026-04-30', name:'Woodside Finance 4.50% Notes 2029', shares:'300,000', market_value_usd:301104, pct_portfolio:21.26, notes:'含应计利息2,100 BBB+/Baa1 ISIN USQ98229AN94'},
+      {as_of_date:'2026-04-30', name:'8% USD DCN UBS AG Jersey (AUD/USD)', shares:'250,000', market_value_usd:250000, pct_portfolio:17.65, notes:'Yield Enhancement结构性产品 ISIN CH1560479672'},
+      {as_of_date:'2026-04-30', name:'8.01% Vontobel FP (Taiwan Semi/ASML)', shares:'250,000', market_value_usd:250000, pct_portfolio:17.65, notes:'Yield Enhancement结构性产品 到期2026-09-16'},
+      {as_of_date:'2026-04-30', name:'UBS通知存款 HKD Call Deposit', shares:'', market_value_usd:226944, pct_portfolio:16.02, notes:'流水号98958 利率1.00%'},
+      {as_of_date:'2026-04-30', name:'阿里巴巴 Alibaba Group (9988)', shares:'4,000', market_value_usd:64337, pct_portfolio:4.54, notes:'港股 ISIN KYG017191142'},
+      {as_of_date:'2026-04-30', name:'NZD现金账户', shares:'', market_value_usd:1221, pct_portfolio:0.09, notes:''},
+      {as_of_date:'2026-04-30', name:'USD现金账户 (透支)', shares:'', market_value_usd:-1104413, pct_portfolio:-77.97, notes:'透支余额'},
+      // ── 2026-05-29 (UBS对账单 净资产 1,665,916) ──────────────────────────────
+      {as_of_date:'2026-05-29', name:'JPMorgan Liquidity Funds 货币基金', shares:'17.028', market_value_usd:300958, pct_portfolio:18.07, notes:'ISIN LU0088277610'},
+      {as_of_date:'2026-05-29', name:'Woodside Finance 4.50% Notes 2029', shares:'300,000', market_value_usd:301977, pct_portfolio:18.13, notes:'含应计利息3,225 BBB+/Baa1 ISIN USQ98229AN94'},
+      {as_of_date:'2026-05-29', name:'8% USD DCN UBS AG Jersey (AUD/USD)', shares:'250,000', market_value_usd:251575, pct_portfolio:15.10, notes:'Yield Enhancement结构性产品 ISIN CH1560479672'},
+      {as_of_date:'2026-05-29', name:'8.01% Vontobel FP (Taiwan Semi/ASML)', shares:'250,000', market_value_usd:245500, pct_portfolio:14.74, notes:'Yield Enhancement结构性产品 到期2026-09-16'},
+      {as_of_date:'2026-05-29', name:'UBS通知存款 USD Call Deposit', shares:'', market_value_usd:275930, pct_portfolio:16.56, notes:'流水号83552 利率2.30%'},
+      {as_of_date:'2026-05-29', name:'UBS通知存款 HKD Call Deposit', shares:'', market_value_usd:227031, pct_portfolio:13.63, notes:'流水号98958 利率1.00%'},
+      {as_of_date:'2026-05-29', name:'阿里巴巴 Alibaba Group (9988)', shares:'4,000', market_value_usd:61704, pct_portfolio:3.70, notes:'港股 ISIN KYG017191142'},
+      {as_of_date:'2026-05-29', name:'NZD现金账户', shares:'', market_value_usd:1241, pct_portfolio:0.07, notes:''},
     ];
     window.SEED_HOLDINGS = SEED_HOLDINGS;
 
@@ -1745,6 +1802,103 @@ function parseA01Holdings(txt, asOfDate) {
       return rows;
     }
 
+    // ── For Lucky PDF parser (English UBS report) ──
+    const flFiles = { FL:null };
+    function parseForLucky(txt){
+      const MON = {January:'01',February:'02',March:'03',April:'04',May:'05',June:'06',
+                   July:'07',August:'08',September:'09',October:'10',November:'11',December:'12'};
+      const out = { month:null, net_assets:null, twr_pct:null, pl_amount:null, holdings:[] };
+
+      // Month: "Statement of assets as of 30 April 2026" / "As of 30 April 2026"
+      const dmM = txt.match(/as of\s+(\d{1,2})\s+(\w+)\s+(\d{4})/i) || txt.match(/As of\s+(\d{1,2})\s+(\w+)\s+(\d{4})/);
+      if(dmM){ out.month = dmM[3]+'-'+(MON[dmM[2]]||'??'); }
+
+      // Net assets: "Net assets <num> 100.00" in asset-class table
+      const naM = txt.match(/Net assets\s+(\d[\d ]{5,12})\s+100\.00/);
+      if(naM) out.net_assets = cleanNum(naM[1]);
+
+      const asOf = out.month ? out.month + '-' + (out.month.endsWith('04')?'30':'29') : '';
+
+      // Helper: pull a position by a label regex, value = digits before pct at line end
+      function grab(re){
+        const m = txt.match(re);
+        if(!m) return null;
+        return { val: parseInt(m[1].replace(/\s/g,'')), pct: parseFloat(m[2]) };
+      }
+      const H = [];
+      const push = (name,shares,o,notes)=>{ if(o) H.push({as_of_date:asOf,name,shares,market_value_usd:o.val,pct_portfolio:o.pct,notes:notes||''}); };
+
+      // Call deposits (USD / HKD) — may be one or two
+      const usdCall = grab(/USD\s+[\d ]+\.\d+\s+UBS Call Deposit[\s\S]{0,120}?(\d[\d ]{3,9})\s+(\d+\.\d+)/);
+      push('UBS通知存款 USD Call Deposit','',usdCall,'利率2.30%');
+      const hkdCall = grab(/HKD\s+[\d ]+(?:\.\d+)?\s+UBS Call Deposit[\s\S]{0,160}?(\d[\d ]{3,9})\s+(\d+\.\d+)/);
+      push('UBS通知存款 HKD Call Deposit','',hkdCall,'流水号98958 利率1.00%');
+
+      // Money market — JPMorgan
+      const mmf = grab(/JPMorgan Liquidity Funds[\s\S]{0,200}?(\d[\d ]{3,9})\s+(\d+\.\d+)/);
+      push('JPMorgan Liquidity Funds 货币基金','17.028',mmf,'ISIN LU0088277610');
+
+      // Bond — Woodside (use Total Bond investments incl accrued)
+      const bond = grab(/Total Bond investments\s+(\d[\d ]{3,9})\s+(\d+\.\d+)/);
+      const bondAcc = txt.match(/Total accrued interest Bond investments\s+(\d[\d ]{1,7})/);
+      if(bond){ const acc=bondAcc?parseInt(bondAcc[1].replace(/\s/g,'')):0; H.push({as_of_date:asOf,name:'Woodside Finance 4.50% Notes 2029',shares:'300,000',market_value_usd:bond.val+acc,pct_portfolio:bond.pct,notes:'含应计利息'+acc+' ISIN USQ98229AN94'}); }
+
+      // DCN structured (Liquidity - Struct)
+      const dcn = grab(/8% USD DCN UBS AG[\s\S]{0,160}?(\d[\d ]{3,9})\s+(\d+\.\d+)/);
+      push('8% USD DCN UBS AG Jersey (AUD/USD)','250,000',dcn,'Yield Enhancement结构性产品 ISIN CH1560479672');
+
+      // Vontobel structured (Equities - Structured)
+      const vont = grab(/Vontobel FP[\s\S]{0,160}?(\d[\d ]{3,9})\s+(\d+\.\d+)/);
+      push('8.01% Vontobel FP (Taiwan Semi/ASML)','250,000',vont,'Yield Enhancement结构性产品');
+
+      // Alibaba equity
+      const baba = grab(/Reg\.shs Alibaba Group[\s\S]{0,160}?(\d[\d ]{3,9})\s+(\d+\.\d+)/);
+      push('阿里巴巴 Alibaba Group (9988)','4,000',baba,'港股 ISIN KYG017191142');
+
+      // NZD cash account (Total Accounts)
+      const acct = grab(/Total Accounts\s+(\d[\d ]{1,9})\s+(\d+\.\d+)/);
+      push('现金账户 (NZD等)','',acct,'');
+
+      out.holdings = H;
+      return out;
+    }
+
+    async function doParseForLucky(){
+      const msg = document.getElementById('fl_parseMsg'); msg.textContent='解析中…';
+      try{
+        if(!flFiles.FL){ msg.textContent='请先选择 PDF'; return; }
+        const txt = await extractText(flFiles.FL);
+        document.getElementById('fl_dumpTxt').value = txt;
+        const r = parseForLucky(txt);
+        if(!r.month || !r.net_assets){ msg.textContent='✗ 未能识别月份/净资产，已显示原始文本'; document.getElementById('fl_dumpPanel').style.display='block'; return; }
+        // Update FL_SEED_MONTHLY (in place)
+        const mi = FL_SEED_MONTHLY.findIndex(m=>m.month===r.month);
+        const rec = {month:r.month, net_assets:r.net_assets, twr_pct:(mi>=0?FL_SEED_MONTHLY[mi].twr_pct:0), pl_amount:(mi>=0?FL_SEED_MONTHLY[mi].pl_amount:0), flow:(mi>=0?FL_SEED_MONTHLY[mi].flow:0), note:(mi>=0?FL_SEED_MONTHLY[mi].note:'')};
+        if(mi>=0) FL_SEED_MONTHLY[mi]=rec; else FL_SEED_MONTHLY.push(rec);
+        // Update FL_SEED_HOLDINGS (replace that as_of_date) in place
+        if(r.holdings.length){
+          const asOf = r.holdings[0].as_of_date;
+          for(let i=FL_SEED_HOLDINGS.length-1;i>=0;i--){ if(FL_SEED_HOLDINGS[i].as_of_date===asOf) FL_SEED_HOLDINGS.splice(i,1); }
+          r.holdings.forEach(h=>FL_SEED_HOLDINGS.push(h));
+        }
+        renderFLAccount();
+        msg.textContent = '✓ 已更新 '+flMonthLabel(r.month)+' · 净资产 USD '+fmt(r.net_assets)+'（'+r.holdings.length+' 笔持仓）';
+      }catch(e){ msg.textContent='✗ 解析失败：'+e.message; }
+    }
+
+    function wireFLDropzone(){
+      const dz=document.getElementById('fl_dz01'), input=document.getElementById('fl_file01');
+      if(!dz||!input) return;
+      const setFile=f=>{ if(!f) return; flFiles.FL=f; dz.querySelector('.fl-fname').textContent=f.name;
+        const b=document.getElementById('fl_parseBtn'); b.disabled=false; b.style.opacity='1'; b.style.cursor='pointer'; };
+      dz.addEventListener('click',()=>input.click());
+      input.addEventListener('change',e=>setFile(e.target.files[0]));
+      dz.addEventListener('dragover',e=>{e.preventDefault(); dz.style.background='rgba(26,39,64,0.04)';});
+      dz.addEventListener('dragleave',()=>{dz.style.background='var(--paper)';});
+      dz.addEventListener('drop',e=>{e.preventDefault(); dz.style.background='var(--paper)'; setFile(e.dataTransfer.files[0]);});
+      document.getElementById('fl_parseBtn').addEventListener('click', doParseForLucky);
+    }
+
     let parsed = {A01:null, A02:null};
     async function doParse(){
       const msg = document.getElementById('le_parseMsg'); msg.textContent = '解析中…';
@@ -1925,6 +2079,7 @@ function parseA01Holdings(txt, asOfDate) {
     document.addEventListener('DOMContentLoaded', function(){
       wireDropzone('le_dz01','le_file01','A01');
       wireDropzone('le_dz02','le_file02','A02');
+      wireFLDropzone();
       document.getElementById('le_parseBtn').addEventListener('click', doParse);
       document.getElementById('le_saveBtn').addEventListener('click', doSave);
       document.getElementById('le_dumpBtn').addEventListener('click', async function(){
@@ -2037,6 +2192,26 @@ function parseA01Holdings(txt, asOfDate) {
       <span class="en">境外 + 台灣两部分</span>
     </div>
 
+
+    <!-- ░░ For Lucky PDF Upload Panel ░░ -->
+    <details id="fl_uploadPanel" style="border:1px solid var(--hairline);border-radius:2px;margin-bottom:20px;background:var(--paper);">
+      <summary style="cursor:pointer;padding:12px 16px;font-family:var(--font-cjk);font-size:13px;font-weight:600;color:var(--ink);">📤 上传 For Lucky UBS 报告 · Update For Lucky Data</summary>
+      <div style="padding:4px 16px 16px;">
+        <div style="margin-bottom:14px;max-width:420px;">
+          <div style="font-family:var(--font-cjk);font-size:12px;font-weight:600;margin-bottom:6px;">ForLucky_账户01 PDF (英文) <span style="color:var(--slate);font-weight:400;">546-889598-01</span></div>
+          <div id="fl_dz01" class="le-dropzone" style="border:2px dashed var(--hairline);background:var(--paper);border-radius:4px;padding:22px 12px;text-align:center;cursor:pointer;transition:background .15s;">
+            <div style="font-size:12px;color:var(--slate);font-family:var(--font-cjk);">点击选择或拖拽 PDF（英文报告）</div>
+            <div class="fl-fname" style="font-size:12px;color:var(--ink);margin-top:6px;font-variant-numeric:tabular-nums;"></div>
+          </div>
+          <input type="file" id="fl_file01" accept="application/pdf" style="display:none;">
+        </div>
+        <button id="fl_parseBtn" type="button" disabled style="font-family:var(--font-cjk);font-size:13px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);padding:8px 18px;border-radius:3px;cursor:pointer;opacity:.45;">解析并更新</button>
+        <span id="fl_parseMsg" style="margin-left:10px;font-size:12px;color:var(--slate);font-family:var(--font-cjk);"></span>
+        <div id="fl_dumpPanel" style="display:none;margin-top:14px;">
+          <textarea id="fl_dumpTxt" style="width:100%;height:240px;font-family:monospace;font-size:11px;border:1px solid var(--hairline);padding:6px;resize:vertical;white-space:pre;" readonly></textarea>
+        </div>
+      </div>
+    </details>
 
     <!-- ── For Lucky UBS代管账户 ── -->
     <div style="margin-bottom:28px;">
@@ -2215,11 +2390,11 @@ function parseA01Holdings(txt, asOfDate) {
 
     /* ── B: Overseas asset allocation ── */
     const ovData = [
-      { label:'達芙妮 (Lucky Earn)',       v:45479207, color:C.d1 },
-      { label:'USD定存+现金 (Lucky Earn)', v:1397017,  color:C.d2 },
-      { label:'港股三只 (For Lucky)',       v:440326,   color:C.d3 },
-      { label:'基金 (For Lucky 台灣)',      v:582049,   color:C.d4 },
-      { label:'现金 (For Lucky)',           v:190824,   color:C.d5 },
+      { label:'達芙妮 Daphne (Lucky Earn A01)',  v:21840716, color:C.d1 },
+      { label:'A01 定存+现金 (Lucky Earn)',       v:78078,    color:C.d2 },
+      { label:'A02 美欧股票组合 (Lucky Earn)',    v:1138390,  color:C.d3 },
+      { label:'For Lucky 债券+结构性 (UBS)',      v:799052,   color:C.d4 },
+      { label:'For Lucky 存款+基金+股票 (UBS)',   v:866864,   color:C.d5 },
     ];
     const ovTotal = ovData.reduce((a,b)=>a+b.v, 0);
     new Chart(document.getElementById('chartOverseas'), {
