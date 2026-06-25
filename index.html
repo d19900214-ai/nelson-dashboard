@@ -2524,4 +2524,14 @@ function parseA01Holdings(txt, asOfDate) {
           callbacks:{ label: ctx=>'  USD '+ctx.parsed.toLocaleString('en-US')+' · '+(ctx.parsed/ovTotal*100).toFixed(1)+'%' }}
       }}
     });
-    const ovLegEl = d
+    const ovLegEl = document.getElementById('overseasLegend');
+    if (ovLegEl) {
+      ovLegEl.innerHTML = ovData.map(d =>
+        '<li><span class="lab"><span class="swatch-dot" style="background:'+d.color+'"></span>'+d.label+'</span><span class="val">USD '+d.v.toLocaleString('en-US')+'<br><span style="font-size:10px;color:var(--slate)">'+(d.v/ovTotal*100).toFixed(1)+'%</span></span></li>'
+      ).join('') + '<li><span class="lab" style="color:var(--slate)">合计</span><span class="val">USD '+ovTotal.toLocaleString('en-US')+'</span></li>';
+    }
+  }
+    window.addEventListener('load', buildCharts);
+</script>
+</body>
+</html>
