@@ -1288,9 +1288,9 @@
     ];
 
     const FL_SEED_MONTHLY = [
-      {month:'2026-03', net_assets:602966,  twr_pct:-2.14, pl_amount:-13213, flow:0,      note:''},
-      {month:'2026-04', net_assets:1416531, twr_pct:0.37,  pl_amount:359,    flow:813206, note:'新资金注入'},
-      {month:'2026-05', net_assets:1665916, twr_pct:-0.21, pl_amount:-3115,  flow:252500, note:''},
+      {month:'2026-03', net_assets:602966,  twr_pct:-2.14, pl_amount:-13213, flow:0,      ytd_twr:null,  note:''},
+      {month:'2026-04', net_assets:1416531, twr_pct:0.37,  pl_amount:359,    flow:813206, ytd_twr:10.84, note:'新资金注入'},
+      {month:'2026-05', net_assets:1665916, twr_pct:-0.21, pl_amount:-3115,  flow:252500, ytd_twr:10.60, note:''},
     ];
     const FL_SEED_HOLDINGS = [
       // ── 2026-04-30 (UBS对账单 净资产 1,416,531) ──────────────────────────────
@@ -1462,8 +1462,8 @@
       // Account card KPIs
       const card = document.getElementById('fl_acctCard');
       if(card){
-        const ytd = FL_SEED_MONTHLY.reduce((a,m)=>a*(1+m.twr_pct/100),1)-1;
-        const pnlTotal = FL_SEED_MONTHLY.reduce((s,m)=>s+m.pl_amount,0);
+        const ytdPct = latest.ytd_twr != null ? latest.ytd_twr : (FL_SEED_MONTHLY.filter(m=>m.month<=latest.month).reduce((a,m)=>a*(1+(m.twr_pct||0)/100),1)-1)*100;
+        const monthLabels = {'2026-03':'3月','2026-04':'4月','2026-05':'5月','2026-06':'6月','2026-07':'7月','2026-08':'8月'};
         card.innerHTML = `
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;padding:14px 0;border-bottom:1px solid var(--hairline);margin-bottom:16px;">
             <div style="padding-right:16px;border-right:1px solid var(--hairline);">
@@ -1474,11 +1474,11 @@
             <div style="padding:0 16px;border-right:1px solid var(--hairline);">
               <div style="font-size:var(--fs-caption);color:var(--slate);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;">当月 TWR</div>
               <div id="fl_card_monthly" style="font-family:var(--font-display);font-size:20px;font-weight:600;color:${signColor(latest.twr_pct)};font-variant-numeric:tabular-nums;">${minusGlyph(pct(latest.twr_pct))}</div>
-              <div id="fl_card_monthly_lbl" style="font-size:var(--fs-small);color:var(--slate);margin-top:3px;">5月</div>
+              <div id="fl_card_monthly_lbl" style="font-size:var(--fs-small);color:var(--slate);margin-top:3px;">${monthLabels[latest.month]||latest.month}</div>
             </div>
             <div style="padding:0 0 0 16px;">
-              <div style="font-size:var(--fs-caption);color:var(--slate);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;">YTD 2026</div>
-              <div style="font-family:var(--font-display);font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--pos);">+10.60%</div>
+              <div style="font-size:var(--fs-caption);color:var(--slate);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;">年初至今 TWR</div>
+              <div id="fl_card_ytd" style="font-family:var(--font-display);font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;color:${signColor(ytdPct)};">${minusGlyph(pct(ytdPct))}</div>
               <div style="font-size:var(--fs-small);color:var(--slate);margin-top:3px;">自2025年末</div>
             </div>
           </div>`;
@@ -1561,9 +1561,15 @@
       const cnMon = document.getElementById('fl_card_monthly');
       const cnMonLbl = document.getElementById('fl_card_monthly_lbl');
       if(flRow && cnNav){ cnNav.textContent = 'USD ' + fmt(flRow.net_assets); }
-      if(flRow && cnLbl){ cnLbl.textContent = date + (date===FL_SEED_MONTHLY.slice().sort((a,b)=>b.month.localeCompare(a.month))[0]?.month+'-'?'':' (最新)'); cnLbl.textContent = date; }
+      if(flRow && cnLbl){ cnLbl.textContent = date; }
       if(flRow && cnMon){ cnMon.textContent = minusGlyph(pct(flRow.twr_pct)); cnMon.style.color = signColor(flRow.twr_pct); }
       if(flRow && cnMonLbl){ const lbl={'2026-03':'3月','2026-04':'4月','2026-05':'5月','2026-06':'6月','2026-07':'7月','2026-08':'8月'}; cnMonLbl.textContent = lbl[month]||month; }
+      const cnYtd = document.getElementById('fl_card_ytd');
+      if(flRow && cnYtd){
+        const ytdPct = flRow.ytd_twr != null ? flRow.ytd_twr : (FL_SEED_MONTHLY.filter(m=>m.month<=month).reduce((a,m)=>a*(1+(m.twr_pct||0)/100),1)-1)*100;
+        cnYtd.textContent = minusGlyph(pct(ytdPct));
+        cnYtd.style.color = signColor(ytdPct);
+      }
       renderFLHoldings();
     }
 
@@ -1593,9 +1599,12 @@
         ? [...topFL, {name:`其他 (${restFL.length}项)`, market_value_usd:restFL.reduce((s,r)=>s+r.market_value_usd,0), pct_portfolio:restFL.reduce((s,r)=>s+r.pct_portfolio,0), notes:''}]
         : topFL;
       const total = allRows.reduce((s,h)=>s+h.market_value_usd,0);
+      const flMonthRow = FL_SEED_MONTHLY.find(r=>r.month===flHoldingsMonth.substring(0,7));
+      const officialTotal = flMonthRow ? flMonthRow.net_assets : total;
       tableEl.innerHTML = `
         <thead><tr>
-          <th style="text-align:left">资产类别</th>
+          <th style="text-align:left">持仓名称</th>
+          <th style="text-align:right">数量</th>
           <th style="text-align:right">市值 USD</th>
           <th style="text-align:right">占比</th>
           <th style="text-align:left">备注</th>
@@ -1603,13 +1612,15 @@
         <tbody>
           ${rows.map(h=>`<tr>
             <td>${h.name}</td>
+            <td style="text-align:right;font-variant-numeric:tabular-nums;color:var(--slate);">${h.shares||'—'}</td>
             <td style="text-align:right;font-variant-numeric:tabular-nums;">${fmt(h.market_value_usd)}</td>
             <td style="text-align:right;font-variant-numeric:tabular-nums;">${(h.pct_portfolio||0).toFixed(2)}%</td>
             <td class="txt" style="font-size:11px;color:var(--slate);">${h.notes||''}</td>
           </tr>`).join('')}
           <tr class="total">
             <td>合计</td>
-            <td style="text-align:right;font-variant-numeric:tabular-nums;">${fmt(total)}</td>
+            <td></td>
+            <td style="text-align:right;font-variant-numeric:tabular-nums;">${fmt(officialTotal)}</td>
             <td style="text-align:right;font-variant-numeric:tabular-nums;">100%</td>
             <td></td>
           </tr>
