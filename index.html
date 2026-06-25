@@ -1097,7 +1097,7 @@
     <!-- ══════════ 实体一：Lucky Earn ══════════ -->
     <div class="block-head">
       <h3 class="sub-title">Lucky Earn Investment Ltd</h3>
-      <span class="en">瑞盈投资有限公司 · UBS 新加坡 · <span id="le_asOf">数据截至 2026-05-29</span>
+      <span class="en">瑞盈投资有限公司 · UBS 新加坡
         <button id="le_refreshBtn" type="button" style="margin-left:12px;font-family:var(--font-cjk);font-size:11px;border:1px solid var(--hairline-strong);background:var(--paper);color:var(--ink);padding:3px 10px;border-radius:3px;cursor:pointer;">↻ 刷新数据</button>
         <span id="le_status" style="margin-left:8px;font-size:11px;color:var(--slate);"></span>
       </span>
@@ -1292,6 +1292,8 @@
       {month:'2026-04', net_assets:1416531, twr_pct:0.37,  pl_amount:359,    flow:813206, ytd_twr:10.84, note:'新资金注入'},
       {month:'2026-05', net_assets:1665916, twr_pct:-0.21, pl_amount:-3115,  flow:252500, ytd_twr:10.60, note:''},
     ];
+    // YTD保底值（来自PDF，当Sheet缺ytd_twr列时使用）
+    const FL_YTD_FALLBACK = {'2026-03':10.43,'2026-04':10.84,'2026-05':10.60};
     const FL_SEED_HOLDINGS = [
       // ── 2026-04-30 (UBS对账单 净资产 1,416,531) ──────────────────────────────
       {as_of_date:'2026-04-30', name:'UBS通知存款 USD Call Deposit', shares:'', market_value_usd:1127338, pct_portfolio:79.58, notes:'流水号62786 利率2.30%'},
@@ -1335,8 +1337,8 @@
       const a01YtdPct = (a01rows.reduce((acc,r)=>acc*(1+(r.twr_pct||0)/100),1)-1)*100;
       // A02 since inception
       const a02rows = MONTHLY.filter(r=>r.account==='A02').sort((a,b)=>a.month.localeCompare(b.month));
-      const a02YtdKpi = a02rows.find(r=>r.ytd_twr!=null)?.ytd_twr;
-      const a02Pct = a02YtdKpi != null ? parseFloat(a02YtdKpi) : (a02rows.reduce((acc,r)=>acc*(1+(r.twr_pct||0)/100),1)-1)*100;
+      const a02YtdKpi = a02rows.find(r=>r.ytd_twr!=null && r.ytd_twr!=='')?.ytd_twr;
+      const a02Pct = (a02YtdKpi != null && a02YtdKpi !== '') ? parseFloat(a02YtdKpi) : (a02rows.reduce((acc,r)=>acc*(1+(r.twr_pct||0)/100),1)-1)*100;
       document.getElementById('le_kpiStrip').innerHTML =
         `<div style="padding:14px 18px;border-right:1px solid var(--hairline);">
           <div style="font-size:var(--fs-caption);letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin-bottom:4px;">UBS 总净资产</div>
@@ -1388,8 +1390,8 @@
       const a02 = latestOf('A02');
       const a02rows = MONTHLY.filter(r=>r.account==='A02').sort((a,b)=>a.month.localeCompare(b.month));
       // 优先使用PDF直接给出的YTD值（存在ytd_twr字段时），避免连乘误差
-      const a02YtdStored = a02 ? a02rows.find(r=>r.ytd_twr!=null)?.ytd_twr : null;
-      const a02ytd = a02YtdStored != null ? parseFloat(a02YtdStored) : (a02rows.reduce((acc,r)=>acc*(1+(r.twr_pct||0)/100),1)-1)*100;
+      const a02YtdStored = a02 ? a02rows.find(r=>r.ytd_twr!=null && r.ytd_twr!=='')?.ytd_twr : null;
+      const a02ytd = (a02YtdStored != null && a02YtdStored !== '') ? parseFloat(a02YtdStored) : (a02rows.reduce((acc,r)=>acc*(1+(r.twr_pct||0)/100),1)-1)*100;
       const a02month = a02 ? a02.twr_pct : null;
       document.getElementById('le_acct02Card').innerHTML = `
         <div style="font-family:var(--font-cjk);font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;">LuckyEarn_账户02</div>
@@ -1432,8 +1434,8 @@
         const a02 = MONTHLY.find(r=>r.month===m && r.account==='A02');
         const total = (a01?a01.net_assets:0) + (a02?a02.net_assets:0);
         const note = (a01&&a01.note) || (a02&&a02.note) || '';
-        const a01block = a01 ? `净资产 USD ${fmt(a01.net_assets)}<br>TWR <span style="color:${signColor(a01.twr_pct)};">${minusGlyph(pct(a01.twr_pct))}</span> &nbsp;|&nbsp; 损益 <span style="color:${signColor(a01.pl_amount)};">${minusGlyph((a01.pl_amount>=0?'+':'')+fmt(a01.pl_amount))}</span>${a01.flow?`<br><span style="color:var(--slate);">资金流 ${minusGlyph((a01.flow>=0?'+':'')+fmt(a01.flow))}</span>`:''}` : 'N/A（未开仓）';
-        const a02block = a02 ? `净资产 USD ${fmt(a02.net_assets)}<br>TWR <span style="color:${signColor(a02.twr_pct)};">${minusGlyph(pct(a02.twr_pct))}</span> &nbsp;|&nbsp; 损益 <span style="color:${signColor(a02.pl_amount)};">${minusGlyph((a02.pl_amount>=0?'+':'')+fmt(a02.pl_amount))}</span>` : 'N/A（未开仓）';
+        const a01block = a01 ? `净资产 USD ${fmt(a01.net_assets)}<br>TWR <span style="color:${signColor(a01.twr_pct)};">${minusGlyph(pct(a01.twr_pct))}</span> &nbsp;|&nbsp; 损益 <span style="color:${signColor(a01.pl_amount)};">${minusGlyph((a01.pl_amount>=0?'+':'')+fmt(a01.pl_amount))}</span>${a01.flow?`<br><span style="color:var(--slate);">资金流 ${minusGlyph((a01.flow>=0?'+':'')+fmt(a01.flow))}</span>`:''}` : '<span style="color:var(--slate);font-size:var(--fs-small);">未开仓</span>';
+        const a02block = a02 ? `净资产 USD ${fmt(a02.net_assets)}<br>TWR <span style="color:${signColor(a02.twr_pct)};">${minusGlyph(pct(a02.twr_pct))}</span> &nbsp;|&nbsp; 损益 <span style="color:${signColor(a02.pl_amount)};">${minusGlyph((a02.pl_amount>=0?'+':'')+fmt(a02.pl_amount))}</span>` : '<span style="color:var(--slate);font-size:var(--fs-small);">未开仓</span>';
         return `<details ${i===0?'open':''} style="border:1px solid var(--hairline);border-radius:2px;margin-bottom:8px;">
           <summary style="cursor:pointer;padding:12px 16px;font-family:var(--font-cjk);font-size:13px;display:flex;justify-content:space-between;align-items:center;">
             <span><strong>${cnMonth(m)}</strong> &nbsp;<span style="color:var(--slate);">合计净资产 USD ${fmt(total)}</span></span>
@@ -1462,14 +1464,14 @@
       // Account card KPIs
       const card = document.getElementById('fl_acctCard');
       if(card){
-        const ytdPct = latest.ytd_twr != null ? latest.ytd_twr : (FL_SEED_MONTHLY.filter(m=>m.month<=latest.month).reduce((a,m)=>a*(1+(m.twr_pct||0)/100),1)-1)*100;
+        const ytdPct = (latest.ytd_twr != null && latest.ytd_twr !== '') ? latest.ytd_twr : (FL_YTD_FALLBACK[latest.month] ?? (FL_SEED_MONTHLY.filter(m=>m.month<=latest.month).reduce((a,m)=>a*(1+(m.twr_pct||0)/100),1)-1)*100);
         const monthLabels = {'2026-03':'3月','2026-04':'4月','2026-05':'5月','2026-06':'6月','2026-07':'7月','2026-08':'8月'};
         card.innerHTML = `
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;padding:14px 0;border-bottom:1px solid var(--hairline);margin-bottom:16px;">
             <div style="padding-right:16px;border-right:1px solid var(--hairline);">
               <div style="font-size:var(--fs-caption);color:var(--slate);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;">UBS净资产</div>
               <div id="fl_card_nav" style="font-family:var(--font-display);font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;">USD ${fmt(latest.net_assets)}</div>
-              <div id="fl_card_nav_lbl" style="font-size:var(--fs-small);color:var(--slate);margin-top:3px;">2026-05-29 (最新)</div>
+              <div id="fl_card_nav_lbl" style="font-size:var(--fs-small);color:var(--slate);margin-top:3px;">${fmtDateStr(FL_SEED_HOLDINGS.map(h=>h.as_of_date).filter(Boolean).sort().reverse()[0]||latest.month+'-29')} (最新)</div>
             </div>
             <div style="padding:0 16px;border-right:1px solid var(--hairline);">
               <div style="font-size:var(--fs-caption);color:var(--slate);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;">当月 TWR</div>
@@ -1561,12 +1563,12 @@
       const cnMon = document.getElementById('fl_card_monthly');
       const cnMonLbl = document.getElementById('fl_card_monthly_lbl');
       if(flRow && cnNav){ cnNav.textContent = 'USD ' + fmt(flRow.net_assets); }
-      if(flRow && cnLbl){ cnLbl.textContent = date; }
+      if(flRow && cnLbl){ cnLbl.textContent = fmtDateStr(date); }
       if(flRow && cnMon){ cnMon.textContent = minusGlyph(pct(flRow.twr_pct)); cnMon.style.color = signColor(flRow.twr_pct); }
       if(flRow && cnMonLbl){ const lbl={'2026-03':'3月','2026-04':'4月','2026-05':'5月','2026-06':'6月','2026-07':'7月','2026-08':'8月'}; cnMonLbl.textContent = lbl[month]||month; }
       const cnYtd = document.getElementById('fl_card_ytd');
       if(flRow && cnYtd){
-        const ytdPct = flRow.ytd_twr != null ? flRow.ytd_twr : (FL_SEED_MONTHLY.filter(m=>m.month<=month).reduce((a,m)=>a*(1+(m.twr_pct||0)/100),1)-1)*100;
+        const ytdPct = (flRow.ytd_twr != null && flRow.ytd_twr !== '') ? flRow.ytd_twr : (FL_YTD_FALLBACK[month.substring(0,7)] ?? (FL_SEED_MONTHLY.filter(m=>m.month<=month).reduce((a,m)=>a*(1+(m.twr_pct||0)/100),1)-1)*100);
         cnYtd.textContent = minusGlyph(pct(ytdPct));
         cnYtd.style.color = signColor(ytdPct);
       }
@@ -1626,10 +1628,19 @@
         </tbody>`;
     }
 
-    function renderAll(){ renderKPI(); renderCards(); renderChart(); renderAccordion(); renderHoldingsHistory(); renderFLAccount();
-      const lu = META.last_updated || latestHoldingDate('A01') || latestHoldingDate('A02');
-      if(lu) document.getElementById('le_asOf').textContent = '数据截至 ' + lu;
+    // 把任意日期值（Date对象 / ISO字符串 / YYYY-MM-DD 字符串）格式化为 YYYY-MM-DD
+    function fmtDateStr(val){
+      if(!val) return '';
+      var s = (val instanceof Date) ? val.toISOString() : String(val);
+      if(s.includes('T')){
+        // ISO带时区：加8小时还原UTC+8，再取前10位
+        var adj = new Date(new Date(s).getTime() + 8*3600*1000);
+        return adj.toISOString().substring(0,10);
+      }
+      return s.substring(0,10);
     }
+
+    function renderAll(){ renderKPI(); renderCards(); renderChart(); renderAccordion(); renderHoldingsHistory(); renderFLAccount(); }
 
     // ── data load ──
     function applySeed(){ MONTHLY = SEED_MONTHLY.map(r=>({...r})); HOLDINGS = SEED_HOLDINGS.map(r=>({...r})); META = {a01_baseline:'24527652',a02_start_date:'2026-02-05',a02_initial:'1000000',last_updated:'2026-05-29'}; }
@@ -2494,7 +2505,6 @@ function parseA01Holdings(txt, asOfDate) {
         '<li><span class="lab"><span class="swatch-dot" style="background:'+catColors[i]+'"></span>'+l+' · '+enMap[l]+'</span><span class="val">'+fmtCNY(catVals[i])+'</span></li>'
       ).join('') + '<li><span class="lab" style="color:var(--slate)">合计 (不含 39A 待补充)</span><span class="val">'+fmtCNY(catVals.reduce((a,b)=>a+b,0))+'</span></li>';
     }
-
     /* ── B: Overseas asset allocation ── */
     const ovData = [
       { label:'達芙妮 (Lucky Earn)',        v:45479207, color:C.d1 },
@@ -2514,16 +2524,4 @@ function parseA01Holdings(txt, asOfDate) {
           callbacks:{ label: ctx=>'  USD '+ctx.parsed.toLocaleString('en-US')+' · '+(ctx.parsed/ovTotal*100).toFixed(1)+'%' }}
       }}
     });
-    const ovLegEl = document.getElementById('overseasLegend');
-    if (ovLegEl) {
-      ovLegEl.innerHTML = ovData.map(d =>
-        '<li><span class="lab"><span class="swatch-dot" style="background:'+d.color+'"></span>'+d.label+'</span><span class="val">USD '+d.v.toLocaleString('en-US')+'<br><span style="font-size:10px;color:var(--slate)">'+(d.v/ovTotal*100).toFixed(1)+'%</span></span></li>'
-      ).join('') + '<li><span class="lab" style="color:var(--slate)">合计</span><span class="val">USD '+ovTotal.toLocaleString('en-US')+'</span></li>';
-    }
-
-  }
-
-    window.addEventListener('load', buildCharts);
-</script>
-</body>
-</html>
+    const ovLegEl = d
