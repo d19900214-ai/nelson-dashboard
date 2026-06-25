@@ -2218,7 +2218,7 @@ function parseA01Holdings(txt, asOfDate) {
     function renderHoldingsTable(monthData) {
       const fmt2 = n => n==null?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:0});
       const pct2 = v => v==null?'—':Number(v).toFixed(v<1?2:1)+'%';
-      function makeTable(rows, cols) {
+      function makeTable(rows, cols, officialTotal) {
         if (!rows||!rows.length) return '<div style="font-size:12px;color:var(--slate);font-family:var(--font-cjk);padding:8px 0;">暂无数据</div>';
         // 按市值降序，前15大显示，其余合并为"其他股票"（预存"其他"行固定置底）
         const isOther = r => (r.name||'').startsWith('其他');
@@ -2235,15 +2235,17 @@ function parseA01Holdings(txt, asOfDate) {
           const cnt = allOther.filter(r=>!isOther(r)).length + preOther.length;
           displayRows = [...top, {name:`其他股票 (${cnt}只)`,shares:'—',market_value_usd:restVal,pct_portfolio:restPct,notes:''}];
         }
-        let total = 0;
+        let posSum = 0;
         const bodyRows = displayRows.map(h => {
-          total += Number(h.market_value_usd)||0;
+          posSum += Number(h.market_value_usd)||0;
           if (cols===5) return `<tr><td>${h.name||'—'}</td><td>${h.shares||'—'}</td><td>${fmt2(h.market_value_usd)}</td><td>${pct2(h.pct_portfolio)}</td><td class="txt">${h.notes||'—'}</td></tr>`;
           return `<tr><td>${h.name||'—'}</td><td>${h.shares||'—'}</td><td>${fmt2(h.market_value_usd)}</td><td>${pct2(h.pct_portfolio)}</td></tr>`;
         }).join('');
+        // 合计优先用 SEED_MONTHLY 官方净资产，保证与卡片顶部一致
+        const displayTotal = officialTotal != null ? officialTotal : posSum;
         const totalRow = cols===5
-          ? `<tr class="total"><td class="txt">合计</td><td>—</td><td>${fmt2(total)}</td><td>100%</td><td>—</td></tr>`
-          : `<tr class="total"><td class="txt">合计</td><td>—</td><td>${fmt2(total)}</td><td>100%</td></tr>`;
+          ? `<tr class="total"><td class="txt">合计</td><td>—</td><td>${fmt2(displayTotal)}</td><td>100%</td><td>—</td></tr>`
+          : `<tr class="total"><td class="txt">合计</td><td>—</td><td>${fmt2(displayTotal)}</td><td>100%</td></tr>`;
         const hdr = cols===5
           ? '<tr><th style="text-align:left">持仓名称</th><th>数量</th><th>市值 USD</th><th>占比</th><th style="text-align:left">备注</th></tr>'
           : '<tr><th style="text-align:left">持仓名称</th><th>数量</th><th>市值 USD</th><th>占比</th></tr>';
@@ -2251,8 +2253,11 @@ function parseA01Holdings(txt, asOfDate) {
       }
       const a01El = document.getElementById('holdingsA01Table');
       const a02El = document.getElementById('holdingsA02Table');
-      if (a01El) a01El.innerHTML = makeTable(monthData?.A01||[], 5);
-      if (a02El) a02El.innerHTML = makeTable(monthData?.A02||[], 4);
+      // 用 SEED_MONTHLY 官方净资产作为合计（与卡片顶部对齐）
+      const mA01 = MONTHLY.find(r=>r.account==='A01'&&r.month===activeHoldingsMonth);
+      const mA02 = MONTHLY.find(r=>r.account==='A02'&&r.month===activeHoldingsMonth);
+      if (a01El) a01El.innerHTML = makeTable(monthData?.A01||[], 5, mA01?.net_assets);
+      if (a02El) a02El.innerHTML = makeTable(monthData?.A02||[], 4, mA02?.net_assets);
     }
     window.switchHoldingsTab = switchHoldingsTab;
     window.switchFLHoldings = switchFLHoldings;
@@ -2460,10 +2465,4 @@ function parseA01Holdings(txt, asOfDate) {
     });
     const catLegendEl = document.getElementById('catLegend');
     if (catLegendEl) {
-      const enMap = {'住宅':'Residential','办公':'Office','商铺':'Retail'};
-      catLegendEl.innerHTML = catLabels.map((l,i) =>
-        '<li><span class="lab"><span class="swatch-dot" style="background:'+catColors[i]+'"></span>'+l+' · '+enMap[l]+'</span><span class="val">'+fmtCNY(catVals[i])+'</span></li>'
-      ).join('') + '<li><span class="lab" style="color:var(--slate)">合计 (不含 39A 待补充)</span><span class="val">'+fmtCNY(catVals.reduce((a,b)=>a+b,0))+'</span></li>';
-    }
-
-   
+      const enMap = {
