@@ -1375,7 +1375,7 @@
         <div style="font-family:var(--font-cjk);font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;">LuckyEarn_账户01</div>
         <div style="font-size:var(--fs-caption);color:var(--slate);font-variant-numeric:tabular-nums;margin-bottom:12px;">546-885658-01 · Lucky Earn Investment Ltd</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline);margin-bottom:14px;">
-          <div style="padding:10px 0;border-right:1px solid var(--hairline);"><div style="font-size:var(--fs-caption);color:var(--slate);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;">净资产</div><div style="font-family:var(--font-display);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;">USD ${fmt(a01?a01.net_assets:0)}</div></div>
+          <div style="padding:10px 0;border-right:1px solid var(--hairline);"><div style="font-size:var(--fs-caption);color:var(--slate);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;">净资产</div><div id="a01_card_nav" style="font-family:var(--font-display);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;">USD ${fmt(a01?a01.net_assets:0)}</div></div>
           <div style="padding:10px 12px;border-right:1px solid var(--hairline);"><div style="font-size:var(--fs-caption);color:var(--slate);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;">YTD TWR</div><div style="font-family:var(--font-display);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;color:${signColor(ytd)};">${minusGlyph(pct(ytd))}</div></div>
           <div style="padding:10px 12px;"><div style="font-size:var(--fs-caption);color:var(--slate);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;">最新单月</div><div style="font-family:var(--font-display);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;color:${signColor(a01?a01.twr_pct:0)};">${minusGlyph(pct(a01?a01.twr_pct:0))}</div></div>
         </div>
@@ -1391,7 +1391,7 @@
         <div style="font-family:var(--font-cjk);font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;">LuckyEarn_账户02</div>
         <div style="font-size:var(--fs-caption);color:var(--slate);font-variant-numeric:tabular-nums;margin-bottom:12px;">546-885658-02 · Lucky Earn Investment Ltd</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline);margin-bottom:14px;">
-          <div style="padding:10px 0;border-right:1px solid var(--hairline);"><div style="font-size:var(--fs-caption);color:var(--slate);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;">净资产</div><div style="font-family:var(--font-display);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;">USD ${fmt(a02?a02.net_assets:0)}</div></div>
+          <div style="padding:10px 0;border-right:1px solid var(--hairline);"><div style="font-size:var(--fs-caption);color:var(--slate);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;">净资产</div><div id="a02_card_nav" style="font-family:var(--font-display);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;">USD ${fmt(a02?a02.net_assets:0)}</div></div>
           <div style="padding:10px 12px;border-right:1px solid var(--hairline);"><div style="font-size:var(--fs-caption);color:var(--slate);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;">自开仓</div><div style="font-family:var(--font-display);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;color:${signColor(a02ytd)};">${minusGlyph(pct(a02ytd))}</div></div>
           <div style="padding:10px 12px;"><div style="font-size:var(--fs-caption);color:var(--slate);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;">最新单月</div><div style="font-family:var(--font-display);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;color:${signColor(a02month)};">${minusGlyph(pct(a02month))}</div></div>
         </div>
@@ -2153,6 +2153,13 @@ function parseA01Holdings(txt, asOfDate) {
     function switchHoldingsTab(month) {
       activeHoldingsMonth = month;
       renderHoldingsHistory();
+      // 同步卡片净资产：切换月份时显示该月净资产，而非始终显示最新月
+      const m = MONTHLY.find(r=>r.account==='A01'&&r.month===month);
+      const m2 = MONTHLY.find(r=>r.account==='A02'&&r.month===month);
+      const el1 = document.getElementById('a01_card_nav');
+      const el2 = document.getElementById('a02_card_nav');
+      if(el1 && m) el1.textContent = 'USD ' + fmt(m.net_assets);
+      if(el2 && m2) el2.textContent = 'USD ' + fmt(m2.net_assets);
     }
 
     function renderHoldingsTable(monthData) {
