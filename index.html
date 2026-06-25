@@ -1287,7 +1287,7 @@
       {as_of_date:'2026-05-29', account:'A02', name:'现金账户', shares:'', market_value_usd:1574, pct_portfolio:0.14, notes:''},
     ];
 
-    const FL_SEED_MONTHLY = [
+    let FL_SEED_MONTHLY = [
       {month:'2026-03', net_assets:602966,  twr_pct:-2.14, pl_amount:-13213, flow:0,      ytd_twr:null,  note:''},
       {month:'2026-04', net_assets:1416531, twr_pct:0.37,  pl_amount:359,    flow:813206, ytd_twr:10.84, note:'新资金注入'},
       {month:'2026-05', net_assets:1665916, twr_pct:-0.21, pl_amount:-3115,  flow:252500, ytd_twr:10.60, note:''},
@@ -1635,6 +1635,15 @@
     // ── data load ──
     function applySeed(){ MONTHLY = SEED_MONTHLY.map(r=>({...r})); HOLDINGS = SEED_HOLDINGS.map(r=>({...r})); META = {a01_baseline:'24527652',a02_start_date:'2026-02-05',a02_initial:'1000000',last_updated:'2026-05-29'}; }
 
+    // 将 Google Sheet 返回的日期字符串（如 "2026-03-31T16:00:00.000Z"）转回 "YYYY-MM"
+    function normalizeMonth(raw){
+      if(!raw) return raw;
+      if(/^\d{4}-\d{2}$/.test(raw)) return raw; // 已经是正确格式
+      // Sheet 存的是月初 UTC+8 时间，UTC 下是上月底；加8小时还原
+      const d = new Date(new Date(raw).getTime() + 8*3600*1000);
+      return d.toISOString().substring(0,7);
+    }
+
     async function loadData(){
       const st = document.getElementById('le_status'); st.textContent = '加载中…';
       try{
@@ -1642,12 +1651,17 @@
         const json = await res.json();
         const mp = json.monthly_performance||[], hd = json.holdings||[], mt = json.meta||[];
         if(mp.length){
-          MONTHLY = mp; HOLDINGS = hd.length?hd:SEED_HOLDINGS.map(r=>({...r}));
+          // 修正月份格式，并拆分 A01/A02 与 FL
+          const normalized = mp.map(r=>({...r, month: normalizeMonth(r.month)}));
+          const mainMp = normalized.filter(r=>r.account!=='FL');
+          const flMp   = normalized.filter(r=>r.account==='FL');
+          MONTHLY  = mainMp.length ? mainMp : SEED_MONTHLY.map(r=>({...r}));
+          if(flMp.length) FL_SEED_MONTHLY = flMp;
+          HOLDINGS = hd.length ? hd : SEED_HOLDINGS.map(r=>({...r}));
           META = {}; (Array.isArray(mt)?mt:[]).forEach(o=>{ if(o&&o.key!=null) META[o.key]=o.value; });
-          if(!META.last_updated) META.last_updated = null;
+          if(!META.last_updated) META.last_updated = '2026-05-29';
         } else {
           applySeed();
-          // seed已设置META.last_updated='2026-05-29'，不用云端meta覆盖
         }
         st.textContent = mp.length ? '✓ 云端数据' : '⚠ 使用本地种子数据';
       }catch(e){ applySeed(); st.textContent = '⚠ 离线 · 本地种子数据'; }
