@@ -2465,4 +2465,41 @@ function parseA01Holdings(txt, asOfDate) {
     });
     const catLegendEl = document.getElementById('catLegend');
     if (catLegendEl) {
-      const enMap = {
+      const enMap = {'住宅':'Residential','办公':'Office','商铺':'Retail'};
+      catLegendEl.innerHTML = catLabels.map((l,i) =>
+        '<li><span class="lab"><span class="swatch-dot" style="background:'+catColors[i]+'"></span>'+l+' · '+enMap[l]+'</span><span class="val">'+fmtCNY(catVals[i])+'</span></li>'
+      ).join('') + '<li><span class="lab" style="color:var(--slate)">合计 (不含 39A 待补充)</span><span class="val">'+fmtCNY(catVals.reduce((a,b)=>a+b,0))+'</span></li>';
+    }
+
+    /* ── B: Overseas asset allocation ── */
+    const ovData = [
+      { label:'達芙妮 (Lucky Earn)',        v:45479207, color:C.d1 },
+      { label:'USD定存+现金 (Lucky Earn)',  v:1397017,  color:C.d2 },
+      { label:'债券+结构产品 (For Lucky)',   v:799052,   color:C.d3 },
+      { label:'通知存款+货币基金 (For Lucky)',v:803919,  color:C.d4 },
+    ];
+    const ovTotal = ovData.reduce((a,b)=>a+b.v, 0);
+    new Chart(document.getElementById('chartOverseas'), {
+      type: 'doughnut',
+      data: { labels: ovData.map(d=>d.label),
+        datasets:[{ data:ovData.map(d=>d.v), backgroundColor:ovData.map(d=>d.color), borderColor:C.paper, borderWidth:2, hoverOffset:4 }]
+      },
+      options: { cutout:'62%', plugins: {
+        legend:{display:false},
+        tooltip:{ backgroundColor:C.ink, padding:10, cornerRadius:0,
+          callbacks:{ label: ctx=>'  USD '+ctx.parsed.toLocaleString('en-US')+' · '+(ctx.parsed/ovTotal*100).toFixed(1)+'%' }}
+      }}
+    });
+    const ovLegEl = document.getElementById('overseasLegend');
+    if (ovLegEl) {
+      ovLegEl.innerHTML = ovData.map(d =>
+        '<li><span class="lab"><span class="swatch-dot" style="background:'+d.color+'"></span>'+d.label+'</span><span class="val">USD '+d.v.toLocaleString('en-US')+'<br><span style="font-size:10px;color:var(--slate)">'+(d.v/ovTotal*100).toFixed(1)+'%</span></span></li>'
+      ).join('') + '<li><span class="lab" style="color:var(--slate)">合计</span><span class="val">USD '+ovTotal.toLocaleString('en-US')+'</span></li>';
+    }
+
+  }
+
+    window.addEventListener('load', buildCharts);
+</script>
+</body>
+</html>
