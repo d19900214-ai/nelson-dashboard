@@ -1578,15 +1578,14 @@
       const tableEl = document.getElementById('fl_holdingsTable');
       if(!tabsEl || !tableEl) return;
 
-      const dates = [...new Set(FL_SEED_HOLDINGS.map(h=>h.as_of_date))].sort().reverse();
+      const dates = [...new Set(FL_SEED_HOLDINGS.map(h=>h.as_of_date))].sort();
 
-      // Render tabs
+      // Render tabs — same underline style as Lucky Earn holdingsTabs
       tabsEl.innerHTML = dates.map(d=>{
-        const label = d.includes('04-30')?'4月报告':d.includes('05-29')?'5月报告':d.includes('06')?'6月报告':d.includes('07')?'7月报告':d.includes('08')?'8月报告':d;
+        const label = d.includes('03-')?'3月报告':d.includes('04-')?'4月报告':d.includes('05-')?'5月报告':d.includes('06-')?'6月报告':d.includes('07-')?'7月报告':d.includes('08-')?'8月报告':d;
         const active = d===flHoldingsMonth;
         return `<button class="fl-tab-btn" data-date="${d}" onclick="switchFLHoldings('${d}')"
-          style="font-family:var(--font-cjk);font-size:12px;padding:4px 12px;margin-right:4px;border:1px solid var(--hairline);border-radius:2px;cursor:pointer;
-          background:${active?'var(--ink)':'transparent'};color:${active?'var(--bg)':'var(--ink-soft)'};">${label}</button>`;
+          style="font-family:var(--font-cjk);font-size:13px;font-weight:${active?'700':'500'};padding:10px 20px;border:none;border-bottom:3px solid ${active?'var(--claret)':'transparent'};background:transparent;cursor:pointer;color:${active?'var(--ink)':'var(--slate)'};transition:all .15s;">${label}</button>`;
       }).join('');
 
       // Holdings for selected month
@@ -2338,7 +2337,7 @@ function parseA01Holdings(txt, asOfDate) {
 
       <!-- 持仓明细（按月） -->
       <div style="font-size:var(--fs-caption);color:var(--slate);text-transform:uppercase;letter-spacing:.1em;margin:0 0 8px;">持仓明细</div>
-      <div id="fl_holdingsTabs" style="margin-bottom:8px;"></div>
+      <div id="fl_holdingsTabs" style="display:flex;gap:0;flex-wrap:wrap;margin-bottom:16px;border-bottom:2px solid var(--hairline);"></div>
       <div style="overflow-x:auto;">
         <table class="ftable" id="fl_holdingsTable"></table>
       </div>
